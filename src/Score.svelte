@@ -24,7 +24,7 @@
 
   let nColor: undefined | 'green' | 'red' = $state(undefined);
 
-  if (dPrime > 0.85) {
+  if (dPrime >= 0.85) {
     nColor = 'green';
     setNBack(nBack + 1);
   } else if (dPrime < 0.7 && nBack > 1) {
