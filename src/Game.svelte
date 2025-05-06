@@ -140,7 +140,7 @@
     }
   }
 
-  const gameInterval = setInterval(gameTick, 1500);
+  const gameInterval = setInterval(gameTick, 2000);
 
   const visualClick = () => {
     clickedVisual[currentStep] = true;
