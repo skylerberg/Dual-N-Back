@@ -1,7 +1,4 @@
-'use strict';
-
 var sw_msgs = '';
-var _paq = [];  // Previously defined by piwik
 
 if ('serviceWorker' in navigator) {
   // Delay registration until after the page has loaded, to ensure that our
@@ -51,24 +48,12 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-/*! modernizr 3.6.0 (Custom Build) | MIT *
- * https://modernizr.com/download/?-passiveeventlisteners-touchevents !*/
-!function(e,n,t){function o(e,n){return typeof e===n}function s(){var e,n,t,s,i,a,r;for(var l in f)if(f.hasOwnProperty(l)){if(e=[],n=f[l],n.name&&(e.push(n.name.toLowerCase()),n.options&&n.options.aliases&&n.options.aliases.length))for(t=0;t<n.options.aliases.length;t++)e.push(n.options.aliases[t].toLowerCase());for(s=o(n.fn,"function")?n.fn():n.fn,i=0;i<e.length;i++)a=e[i],r=a.split("."),1===r.length?Modernizr[r[0]]=s:(!Modernizr[r[0]]||Modernizr[r[0]]instanceof Boolean||(Modernizr[r[0]]=new Boolean(Modernizr[r[0]])),Modernizr[r[0]][r[1]]=s),d.push((s?"":"no-")+r.join("-"))}}function i(){return"function"!=typeof n.createElement?n.createElement(arguments[0]):p?n.createElementNS.call(n,"http://www.w3.org/2000/svg",arguments[0]):n.createElement.apply(n,arguments)}function a(){var e=n.body;return e||(e=i(p?"svg":"body"),e.fake=!0),e}function r(e,t,o,s){var r,f,l,d,u="modernizr",p=i("div"),h=a();if(parseInt(o,10))for(;o--;)l=i("div"),l.id=s?s[o]:u+(o+1),p.appendChild(l);return r=i("style"),r.type="text/css",r.id="s"+u,(h.fake?h:p).appendChild(r),h.appendChild(p),r.styleSheet?r.styleSheet.cssText=e:r.appendChild(n.createTextNode(e)),p.id=u,h.fake&&(h.style.background="",h.style.overflow="hidden",d=c.style.overflow,c.style.overflow="hidden",c.appendChild(h)),f=t(p,e),h.fake?(h.parentNode.removeChild(h),c.style.overflow=d,c.offsetHeight):p.parentNode.removeChild(p),!!f}var f=[],l={_version:"3.6.0",_config:{classPrefix:"",enableClasses:!0,enableJSClass:!0,usePrefixes:!0},_q:[],on:function(e,n){var t=this;setTimeout(function(){n(t[e])},0)},addTest:function(e,n,t){f.push({name:e,fn:n,options:t})},addAsyncTest:function(e){f.push({name:null,fn:e})}},Modernizr=function(){};Modernizr.prototype=l,Modernizr=new Modernizr;var d=[],u=l._config.usePrefixes?" -webkit- -moz- -o- -ms- ".split(" "):["",""];l._prefixes=u;var c=n.documentElement,p="svg"===c.nodeName.toLowerCase(),h=l.testStyles=r;Modernizr.addTest("touchevents",function(){var t;if("ontouchstart"in e||e.DocumentTouch&&n instanceof DocumentTouch)t=!0;else{var o=["@media (",u.join("touch-enabled),("),"heartz",")","{#modernizr{top:9px;position:absolute}}"].join("");h(o,function(e){t=9===e.offsetTop})}return t}),Modernizr.addTest("passiveeventlisteners",function(){var n=!1;try{var t=Object.defineProperty({},"passive",{get:function(){n=!0}});e.addEventListener("test",null,t)}catch(o){}return n}),s(),delete l.addTest,delete l.addAsyncTest;for(var v=0;v<Modernizr._q.length;v++)Modernizr._q[v]();e.Modernizr=Modernizr}(window,document);
+const clickEvnt = "click";
 
-const clickEvnt = Modernizr.touchevents ? "touchstart" : "click";
-
-var N_plus = 20;
-var iFrequency = 3000;
 var myInterval = 0;
 var N = 1;
 var cfg;
-var snds = [];
 var stats;
-var timestep_start;
-var vis_stack = [];
-var letter_stack = [];
-var vis_clicks = [];
-var letter_clicks = [];
 var vis_delays = [];
 var letter_delays = [];
 var vis_wrong = 0; // incorrect click
@@ -78,10 +63,6 @@ var letter_misses = 0;
 var vis_hits = 0;
 var letter_hits = 0;
 var d_prime = 0;
-var time = 0;
-
-const LETTERS = ["F", "I", "J", "L", "Q", "R", "S", "T", "U", "Y"];
-let sprites;
 
 function compareDates(a, b) {
     return a.getDate() === b.getDate()
@@ -174,55 +155,6 @@ function goto_help() {
     }
 }
 
-function primeAudioEngine() {
-    // Play a very short sound to force browser audio engine to wake up
-    return new Promise((resolve) => {
-        if (sprites !== undefined) {
-            // Mute volume, play a sound, and then un-mute
-            // to force audio engine to fully load the sprites.
-            console.log("Priming audio engine.");
-            Howler.volume(0.0);
-            sprites.play("F");
-            sprites.once("end", () => {
-                Howler.volume(1.0);
-                console.log("Ready");
-                resolve();
-            });
-        } else {
-            console.log("Loading audio engine...");
-            sprites = new Howl({
-                src: ["/audio/sprites.mp3", "/audio/sprites.wav"],
-                preload: true,
-                html5: false,
-                sprite: {
-                    F: [0, 850],
-                    I: [1000, 850],
-                    J: [2000, 850],
-                    L: [3000, 850],
-                    Q: [4000, 850],
-                    R: [5000, 850],
-                    S: [6000, 850],
-                    T: [7000, 850],
-                    U: [8000, 850],
-                    Y: [9000, 850],
-                }
-            });
-            // Mute volume, play a sound, and then un-mute
-            // to force audio engine to fully load the sprites.
-            sprites.once("load", () => {
-                console.log("Priming audio engine.");
-                Howler.volume(0.0);
-                sprites.play("B");
-                sprites.once("end", () => {
-                    Howler.volume(1.0);
-                    console.log("Ready");
-                    resolve();
-                });
-            });
-        }
-    });
-}
-
 function goto_game(callback) {
     hide_menu();
     window.addEventListener("keypress", gameKeypress);
@@ -233,7 +165,6 @@ function goto_game(callback) {
         replaceEventListener(get_screen().getElementById("vis_button"), clickEvnt, function(e) {  eyeButtonPress();});
         replaceEventListener(get_screen().getElementById("letter_button"), clickEvnt, function(e) { soundButtonPress();});
         replaceEventListener(get_screen().getElementById("#back"), clickEvnt, function(e) {
-            _paq.push(['trackEvent', 'Game', 'Exit', N]);
             window.history.back();
         });
 
@@ -321,26 +252,6 @@ function toggle_reset_n() {
     localStorage.setItem('config', JSON.stringify(cfg));
 }
 
-function set_n(new_level) {
-    N = Math.max(1, new_level);
-    localStorage.setItem("N", N);
-    get_menu().getElementById("#level_num").innerText = `${N}`;
-}
-
-function level_down() {
-    set_n(N - 1);
-    _paq.push(['trackEvent', 'Config', 'LevelDown', N]);
-}
-
-function level_up() {
-    set_n(N + 1);
-    _paq.push(['trackEvent', 'Config', 'LevelUp', N]);
-}
-
-function go_back() {
-    window.history.back();
-}
-
 function downloadStats() {
     let elm = cloner(get_menu().getElementById('#download_stats'));
     elm.style.webkitAnimationPlayState = 'running';
@@ -395,27 +306,6 @@ function clearStorageButtonClick() {
     }
 }
 
-function setActiveBox(box) {
-    if (box >= 0 && box < 8) {
-        let elm = cloner(get_screen().getElementsByClassName('box')[box]);
-        elm.style.webkitAnimationPlayState = 'running';
-        elm.style.animationPlayState = 'running';
-    }
-}
-
-function eyeButtonPress() {
-    let delay = Date.now() - timestep_start;
-    vis_delays.push(delay);
-    vis_clicks.push(time-1);
-    get_screen().getElementById('vis_button').style.backgroundColor = '#609f9f';
-}
-
-function soundButtonPress() {
-    let delay = Date.now() - timestep_start;
-    letter_delays.push(delay);
-    letter_clicks.push(time-1);
-    get_screen().getElementById('letter_button').style.backgroundColor = '#609f9f';
-}
 
 function updateStats() {
     let entry = { "time": (new Date()).toJSON(), "N": N,
@@ -426,187 +316,6 @@ function updateStats() {
     localStorage.setItem("stats", JSON.stringify(stats));
 }
 
-function calculateScore() {
-    vis_wrong = 0;
-    vis_misses = 0;
-    letter_wrong = 0;
-    letter_misses = 0;
-    vis_hits = 0;
-    letter_hits = 0;
-    for (let i=N; i<vis_stack.length; i++) {
-        if (vis_stack[i] == vis_stack[i-N]) {
-            if (vis_clicks.indexOf(i) > -1) {
-                vis_hits += 1;
-            } else {
-                vis_misses += 1;
-            }
-        } else {
-            if (vis_clicks.indexOf(i) > -1) {
-                vis_wrong += 1;
-            }
-        }
-        if (letter_stack[i] == letter_stack[i-N]) {
-            if (letter_clicks.indexOf(i) > -1) {
-                letter_hits += 1;
-            } else {
-                letter_misses += 1;
-            }
-        } else {
-            if (letter_clicks.indexOf(i) > -1) {
-                letter_wrong += 1;
-            }
-        }
-    }
-
-    let hit_rate = (vis_hits/6.0 + letter_hits/6.0)/2.0;
-    let false_alarm_rate = (vis_wrong/(vis_stack.length-6) + letter_wrong/(vis_stack.length - 6))/2.0;
-    d_prime = hit_rate - false_alarm_rate;
-
-    if (d_prime > 0.85) {
-        _paq.push(['trackEvent', 'Game', 'Win', N]);
-        return 1;
-    } else if (d_prime < 0.7) {
-        _paq.push(['trackEvent', 'Game', 'Lose', N]);
-        return -1;
-    } else {
-        _paq.push(['trackEvent', 'Game', 'Nochange', N]);
-        return 0;
-    }
-}
-
-function playLetter(idx) {
-    sprites.play(LETTERS[idx])
-}
-
-function doTimestep() {
-    get_screen().getElementById('vis_button').style.backgroundColor = '#d9d9d9';
-    get_screen().getElementById('letter_button').style.backgroundColor = '#d9d9d9';
-    if (time < vis_stack.length) {
-        let letter_idx = letter_stack[time];
-        let box_idx = vis_stack[time];
-        console.log(`${time}: ${LETTERS[letter_idx]} / ${box_idx}`);
-
-        timestep_start = Date.now();
-        setActiveBox(box_idx);
-        playLetter(letter_idx);
-        time += 1;
-    } else {
-        setActiveBox(-1);
-        clearInterval(myInterval);
-        updateStats();
-        N = Math.max(1, N+calculateScore());
-        localStorage.setItem("N", N);
-        // show score
-        window.history.replaceState({'page':'score'}, '', '');
-        goto_score();
-    }
-}
-
-function buildGameSequence() {
-    let next = -1;
-
-    let visual_matches = [];
-    let auditory_matches = [];
-    // Choose four random timesteps in which there will be a
-    // visual match
-    while (visual_matches.length < 4) {
-        next = Math.floor(Math.random()*(N_plus));
-        if (visual_matches.indexOf(next+N) == -1)
-            visual_matches.push(next+N);
-    }
-    // Choose four random timesteps in which there will be an
-    // auditory match
-    while (auditory_matches.length < 4) {
-        next = Math.floor(Math.random()*(N_plus));
-        if (auditory_matches.indexOf(next+N) == -1 && visual_matches.indexOf(next+N) == -1)
-            auditory_matches.push(next+N);
-    }
-
-    // Choose two random timesteps in which there is a double match
-    while (auditory_matches.length < 6) {
-        next = Math.floor(Math.random()*(N_plus));
-        if (auditory_matches.indexOf(next+N) == -1 && visual_matches.indexOf(next+N) == -1) {
-            auditory_matches.push(next+N);
-            visual_matches.push(next+N);
-        }
-    }
-
-    let visual_stack = [];
-    let auditory_stack = [];
-    // Randomly assign first N rounds
-    while (visual_stack.length < N) {
-        next = Math.floor(Math.random()*(8));
-        if (visual_stack.indexOf(next) == -1)
-            visual_stack.push(next);
-    }
-    while (auditory_stack.length < N) {
-        next = Math.floor(Math.random()*(10));
-        if (auditory_stack.indexOf(next) == -1)
-            auditory_stack.push(next);
-    }
-    // Now add random positions to the stack until it's full.
-    // Make sure that unless this is one of the selected timesteps
-    // from earlier, that each position is not the same as the one
-    // N steps ago.
-    while (visual_stack.length < N_plus+N) {
-        if (visual_matches.indexOf(visual_stack.length) != -1) {
-            visual_stack.push(visual_stack[visual_stack.length-N]);
-        } else {
-            next = Math.floor(Math.random()*(7));
-            if (next >= visual_stack[visual_stack.length-N])
-                next += 1;
-            visual_stack.push(next);
-        }
-    }
-
-    while (auditory_stack.length < N_plus+N) {
-        if (auditory_matches.indexOf(auditory_stack.length) != -1) {
-            auditory_stack.push(auditory_stack[auditory_stack.length-N]);
-        } else {
-            next = Math.floor(Math.random()*(9));
-            if (next >= auditory_stack[auditory_stack.length-N])
-                next += 1;
-            auditory_stack.push(next);
-        }
-    }
-
-    return [visual_stack, auditory_stack];
-}
-
-function startGame(isRestart) {
-    console.log(`Starting game N=${N}`);
-    _paq.push(['trackEvent', 'Game', (isRestart ? 'Restart' : 'Start'), N]);
-    if (isRestart)
-        window.history.replaceState({'page':'game'}, '', '');
-    else
-        window.history.pushState({'page':'game'}, '', '');
-
-    let stacks = buildGameSequence(N);
-    vis_stack = stacks[0];
-    letter_stack = stacks[1];
-
-    vis_clicks = [];
-    letter_clicks = [];
-    vis_delays = [];
-    letter_delays = [];
-    time = 0;
-    goto_game(function() {
-        // Start game
-        myInterval = setInterval(doTimestep, iFrequency);  // run
-    });
-}
-
-window.onpopstate = function(event) {
-    //console.log("location: " + location.href + ", data: " + JSON.stringify(event.state));
-    if (event.state == null || event.state['page'] == 'home')
-        goto_home();
-    else if (event.state['page'] == 'score')
-        goto_score();
-    else if (event.state['page'] == 'help')
-        goto_help();
-    else if (event.state['page'] == 'stats')
-        goto_stats();
-};
 
 window.addEventListener("load", function() {
     try { stats = JSON.parse(localStorage.getItem("stats")); } catch (err)  { }
