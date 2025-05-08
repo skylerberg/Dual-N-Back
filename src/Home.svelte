@@ -67,8 +67,8 @@
 <style>
   #home-screen {
     display: flex;
-    align-items: center;
     flex-direction: column;
-    align-content: center;
+    justify-content: center;
+    height: 100%;
   }
 </style>
