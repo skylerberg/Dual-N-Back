@@ -111,9 +111,12 @@
 
   let currentStep = $state(-1);
   let activeBox: number | null = $state(null);
+  let gracePeriod = false;
 
   const gameTick = () => {
     currentStep += 1;
+    gracePeriod = true;
+    setTimeout(() => gracePeriod = false, 100);
     if (currentStep < timesteps.length) {
       const audioPrompt = auditoryPrompts[currentStep];
       const visualPrompt = visualPrompts[currentStep];
@@ -143,11 +146,21 @@
   const gameInterval = setInterval(gameTick, 2000);
 
   const visualClick = () => {
-    clickedVisual[currentStep] = true;
+    if (gracePeriod) {
+      clickedVisual[currentStep - 1] = true;
+    }
+    else {
+      clickedVisual[currentStep] = true;
+    }
   }
 
   const auditoryClick = () => {
-    clickedAuditory[currentStep] = true;
+    if (gracePeriod) {
+      clickedAuditory[currentStep - 1] = true;
+    }
+    else {
+      clickedAuditory[currentStep] = true;
+    }
   }
 
   const makeGameResult = (): GameResult => {
