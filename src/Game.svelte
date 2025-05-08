@@ -189,7 +189,8 @@
     <button
       id="visual-button"
       class="game-button {clickedVisual[currentStep] ? 'game-button-clicked' : ''}"
-      onclick={visualClick}
+      onmousedown={visualClick}
+      ontouchstart={visualClick}
     >
       <img src="{eyeSvg}" class="game-button-image" alt="eye" />
     </button>
@@ -197,7 +198,8 @@
     <button
       id="auditory-button"
       class="game-button {clickedAuditory[currentStep] ? 'game-button-clicked' : ''}"
-      onclick={auditoryClick}
+      onmousedown={auditoryClick}
+      contouchstart={auditoryClick}
     >
       <img src="{speakerSvg}" class="game-button-image" alt="speaker" />
     </button>
