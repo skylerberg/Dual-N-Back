@@ -4,11 +4,12 @@
   import PlayButton from './PlayButton.svelte';
   import type {GameResult} from './types';
 
-  let {nBack, setNBack, startGame, gameResult}: {
+  let {nBack, setNBack, startGame, gameResult, gamesToday}: {
     nBack: number,
     setNBack: (n: number) => void,
     startGame: () => void,
     gameResult: GameResult | undefined,
+    gamesToday: number,
   } = $props();
 
   const totalCorrect = gameResult.visual.truePositives + gameResult.auditory.truePositives;
@@ -70,7 +71,7 @@
     <div>d' = {Math.round(dPrime * 100)}%</div>
   </div>
 
-  <PlayButton nColor={nColor} nBack={nBack} startGame={startGame} />
+  <PlayButton nColor={nColor} nBack={nBack} startGame={startGame} gamesToday={gamesToday} />
 </div>
 
 <style>

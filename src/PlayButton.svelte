@@ -1,17 +1,18 @@
 <script lang="ts">
   import playSvg from './assets/img/play.svg';
 
-  let {nBack, startGame, nColor}: {
+  let {nBack, startGame, nColor, gamesToday}: {
     nBack: number,
     startGame: () => void,
     nColor: undefined | 'green' | 'red',
+    gamesToday: number,
   } = $props();
 </script>
 
 <button id="play" onclick={startGame}>
   <div class="n-equals {nColor}">N = {nBack}</div>
   <img id="play-svg" src={playSvg} alt="play"/>
-  <div class="daily-progress">0 / 20</div>
+  <div class="daily-progress">{gamesToday} / 20</div>
 </button>
 
 <style>
