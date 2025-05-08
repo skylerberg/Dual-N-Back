@@ -6,10 +6,10 @@
   import iMp3 from './assets/audio/i.mp3';
   import jMp3 from './assets/audio/j.mp3';
   import qMp3 from './assets/audio/q.mp3';
+  import nMp3 from './assets/audio/n.mp3';
   import rMp3 from './assets/audio/r.mp3';
   import sMp3 from './assets/audio/s.mp3';
   import tMp3 from './assets/audio/t.mp3';
-  import uMp3 from './assets/audio/u.mp3';
   import yMp3 from './assets/audio/y.mp3';
   import type {GameResult} from './types';
 
@@ -26,10 +26,10 @@
     new Audio(iMp3),
     new Audio(jMp3),
     new Audio(qMp3),
+    new Audio(nMp3),
     new Audio(rMp3),
     new Audio(sMp3),
     new Audio(tMp3),
-    new Audio(uMp3),
     new Audio(yMp3),
   ]
 
