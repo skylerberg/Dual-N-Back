@@ -277,7 +277,7 @@
 }
 
 .game-button-clicked {
-  background-color: #609f9f !important;
+  background-color: #9f7f60 !important;
 }
 
 .game-button-image {
