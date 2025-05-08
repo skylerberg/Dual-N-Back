@@ -237,7 +237,7 @@
 
 .grid-box {
   aspect-ratio: 1 / 1;
-  background: #99ccff;
+  background: #c63;
   border-radius: 10%;
 }
 
@@ -246,11 +246,11 @@
 }
 
 @keyframes fade {
-   0% {background: #99ccff;}
-   1% {background: #3366cc;}
-   17% {background: #3366cc;}
-   18% {background: #99ccff;}
-   100% {background: #99ccff;}
+   0% {background: #c63;}
+   1% {background: #fc9;}
+   17% {background: #fc9;}
+   18% {background: #c63;}
+   100% {background: #c63;}
 }
 
 #game-buttons {
@@ -271,6 +271,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #222;
+  border-width: 2px;
+  border-color: #eee;
 }
 
 .game-button-clicked {

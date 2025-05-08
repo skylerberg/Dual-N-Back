@@ -1,6 +1,11 @@
 * {
   box-sizing: border-box;
   font-family: sans-serif;
+  color: #eee;
+}
+
+img {
+  filter: invert(100%) sepia(0%) saturate(4331%) hue-rotate(299deg) brightness(115%) contrast(87%);
 }
 
 td {
@@ -9,6 +14,7 @@ td {
 
 html {
   height: 100%;
+  background: #161100;
 }
 
 body {

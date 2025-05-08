@@ -22,10 +22,11 @@
       gameResult.auditory.falsePositives
   );
   const dPrime = totalCorrect / totalOpportunities
+  const score = Math.round(dPrime * 100)
 
   let nColor: undefined | 'green' | 'red' = $state(undefined);
 
-  if (dPrime >= 0.85) {
+  if (score >= 85) {
     nColor = 'green';
     setNBack(nBack + 1);
   } else if (dPrime < 0.7 && nBack > 1) {
