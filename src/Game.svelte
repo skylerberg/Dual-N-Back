@@ -212,7 +212,7 @@
       id="auditory-button"
       class="game-button {clickedAuditory[currentStep] ? 'game-button-clicked' : ''}"
       onmousedown={auditoryClick}
-      contouchstart={auditoryClick}
+      ontouchstart={auditoryClick}
     >
       <img src="{speakerSvg}" class="game-button-image" alt="speaker" />
     </button>
