@@ -16,10 +16,13 @@ td {
 html {
   height: 100dvh;
   background: #161100;
+  overflow: hidden;
 }
 
 body {
+  margin: 0;
   height: 100dvh;
+  overflow: hidden;
 }
 
 #app {
