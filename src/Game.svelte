@@ -107,9 +107,6 @@
   const clickedVisual = $state(Array(timesteps.length).fill(false));
   const clickedAuditory = $state(Array(timesteps.length).fill(false));
 
-  //vis_delays = [];
-  //letter_delays = [];
-
   let currentStep = $state(-1);
   let activeBox: number | null = $state(null);
   let gracePeriod = false;
@@ -132,15 +129,10 @@
       void gridBoxes[activeBox].offsetWidth;
       
       gridBoxes[activeBox].classList.add('grid-box-active');
-      //playLetter(letter_idx);
     } else {
-      //setActiveBox(-1);
       clearInterval(gameInterval);
       const result = makeGameResult();
       finishGame(result);
-      //updateStats();
-      //N = Math.max(1, N+calculateScore());
-      //localStorage.setItem("N", N);
     }
   }
 
@@ -179,6 +171,11 @@
         falsePositives: clickedAuditory.filter((step) => step).length - auditoryTruePositives,
       }
     };
+  }
+
+  const back = () => {
+    clearInterval(gameInterval);
+    cancelGame();
   }
 </script>
 
@@ -220,7 +217,7 @@
   </div>
 
   <!-- Back button -->
-  <svg onclick={cancelGame} id="#back" viewBox="0 0 50 50" width=50px height=50px style="position:absolute;left:0;top:0;">
+  <svg onclick={back} id="#back" viewBox="0 0 50 50" width=50px height=50px style="position:absolute;left:0;top:0;">
     <rect style="opacity:0.0;" width=50px height=50px x=0 y=0 />
     <polygon points='17,25 33,35 33,15' style='fill:white;' />
   </svg>
