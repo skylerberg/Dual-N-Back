@@ -14,12 +14,12 @@ td {
 }
 
 html {
-  height: 100%;
+  height: 100dvh;
   background: #161100;
 }
 
 body {
-  height: 100%;
+  height: 100dvh;
 }
 
 #app {
