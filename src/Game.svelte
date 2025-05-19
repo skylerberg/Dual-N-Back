@@ -13,9 +13,10 @@
   import yMp3 from './assets/audio/y.mp3';
   import type {GameResult} from './types';
 
-  let {nBack, finishGame}: {
+  let {nBack, finishGame, cancelGame}: {
     nBack: number,
     finishGame: (result: GameResult) => void,
+    cancelGame: () => void,
   } = $props();
 
   let gridBox1, gridBox2, gridBox3, gridBox4, gridBox5, gridBox6, gridBox7, gridBox8;
@@ -219,9 +220,9 @@
   </div>
 
   <!-- Back button -->
-  <svg id="#back" viewBox="0 0 50 50" width=50px height=50px style="position:absolute;left:0;top:0;">
+  <svg onclick={cancelGame} id="#back" viewBox="0 0 50 50" width=50px height=50px style="position:absolute;left:0;top:0;">
     <rect style="opacity:0.0;" width=50px height=50px x=0 y=0 />
-    <polygon points='17,25 33,35 33,15' style='fill:black;' />
+    <polygon points='17,25 33,35 33,15' style='fill:white;' />
   </svg>
 </div>
 
