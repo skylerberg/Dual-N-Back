@@ -35,7 +35,7 @@
   }
 
   const cancelGame = () => {
-    page = 'Game';
+    page = 'Home';
   }
 
   let gameResult: undefined | GameResult = $state(undefined);
