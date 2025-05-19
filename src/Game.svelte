@@ -59,8 +59,8 @@
     visualMatchSteps: Array<number>,
     auditoryMatchSteps: Array<number>,
   } => {
-    const visualMatchSteps = choose(timesteps.slice(nBack), 6);
-    const auditoryMatchSteps = choose(timesteps.slice(nBack), 6);
+    const visualMatchSteps = choose(timesteps.slice(nBack), 9);
+    const auditoryMatchSteps = choose(timesteps.slice(nBack), 9);
 
     let visualPrompts: Array<VisualPrompt> = [];
     let auditoryPrompts: Array<AuditoryPrompt> = [];
@@ -95,7 +95,7 @@
     return {visualPrompts, auditoryPrompts, visualMatchSteps, auditoryMatchSteps};
   }
 
-  const timesteps: Array<number> = [...Array(20 + nBack).keys()];
+  const timesteps: Array<number> = [...Array(30 + nBack).keys()];
   const {
     visualPrompts,
     auditoryPrompts,
