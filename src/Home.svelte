@@ -34,6 +34,10 @@
     page = 'Game';
   }
 
+  const cancelGame = () => {
+    page = 'Game';
+  }
+
   let gameResult: undefined | GameResult = $state(undefined);
 
   const finishGame = (result: GameResult) => {
@@ -59,7 +63,7 @@
     <PlayButton nBack={nBack} startGame={startGame} gamesToday={gamesToday} />
   </div>
 {:else if page === 'Game'}
-  <Game nBack={nBack} finishGame={finishGame} />
+  <Game nBack={nBack} finishGame={finishGame} cancelGame={cancelGame} />
 {:else if page === 'Score' && gameResult}
   <Score nBack={nBack} setNBack={setNBack} startGame={startGame} gameResult={gameResult} gamesToday={gamesToday} />
 {/if}
