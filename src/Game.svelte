@@ -23,8 +23,8 @@
   let gridBoxes = $derived([ gridBox1, gridBox2, gridBox3, gridBox4, gridBox5, gridBox6, gridBox7, gridBox8, ]);
 
   let sounds = [
-    //new Audio(fMp3),
-    new Audio(iMp3),
+    new Audio(fMp3),
+    //new Audio(iMp3),
     new Audio(jMp3),
     new Audio(qMp3),
     new Audio(nMp3),
