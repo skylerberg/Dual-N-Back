@@ -3,7 +3,6 @@
   import eyeSvg from './assets/img/eye.svg';
   import speakerSvg from './assets/img/speaker.svg';
   import fMp3 from './assets/audio/f.mp3';
-  import iMp3 from './assets/audio/i.mp3';
   import jMp3 from './assets/audio/j.mp3';
   import qMp3 from './assets/audio/q.mp3';
   import nMp3 from './assets/audio/n.mp3';
@@ -22,17 +21,21 @@
   let gridBox1, gridBox2, gridBox3, gridBox4, gridBox5, gridBox6, gridBox7, gridBox8;
   let gridBoxes = $derived([ gridBox1, gridBox2, gridBox3, gridBox4, gridBox5, gridBox6, gridBox7, gridBox8, ]);
 
-  let sounds = [
-    new Audio(fMp3),
-    //new Audio(iMp3),
-    new Audio(jMp3),
-    new Audio(qMp3),
-    new Audio(nMp3),
-    new Audio(rMp3),
-    new Audio(sMp3),
-    new Audio(tMp3),
-    new Audio(yMp3),
-  ]
+  const audioContext = new AudioContext();
+  const soundUrls = [fMp3, jMp3, qMp3, nMp3, rMp3, sMp3, tMp3, yMp3];
+  let audioBuffers: AudioBuffer[] = [];
+
+  Promise.all(
+    soundUrls.map(url => fetch(url).then(r => r.arrayBuffer()).then(buf => audioContext.decodeAudioData(buf)))
+  ).then(buffers => { audioBuffers = buffers; });
+
+  function playSound(index: number) {
+    audioContext.resume();
+    const source = audioContext.createBufferSource();
+    source.buffer = audioBuffers[index];
+    source.connect(audioContext.destination);
+    source.start(0);
+  }
 
   type VisualPrompt = number;
   type AuditoryPrompt = number;
@@ -118,8 +121,7 @@
     if (currentStep < timesteps.length) {
       const audioPrompt = auditoryPrompts[currentStep];
       const visualPrompt = visualPrompts[currentStep];
-      sounds[audioPrompt].currentTime = 0;
-      sounds[audioPrompt].play();
+      playSound(audioPrompt);
 
       if (activeBox !== null) {
         gridBoxes[activeBox].classList.remove('grid-box-active');
