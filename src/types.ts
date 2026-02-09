@@ -11,3 +11,9 @@ export type GameResult = {
   },
 };
 
+export type GameLogEntry = {
+  nBack: number;
+  result: GameResult;
+  date: string;
+};
+

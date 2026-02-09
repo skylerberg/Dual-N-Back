@@ -2,12 +2,12 @@
   import Game from './Game.svelte';
   import Score from './Score.svelte';
   import PlayButton from './PlayButton.svelte';
-  import type {GameResult} from './types';
+  import type {GameResult, GameLogEntry} from './types';
 
   type State = 'Home' | 'Game' | 'Score';
   let page: State = $state('Home');
   let nBack = $state(1);
-  let gameLog: Array<any> = $state([]);
+  let gameLog: Array<GameLogEntry> = $state([]);
   let gamesToday = $state(0);
 
   const getDateString = (date: Date): string => {
@@ -16,18 +16,23 @@
 
   let today = getDateString(new Date());
 
-  const storedNBack = localStorage.getItem('nBack');
-  if (storedNBack) {
-    nBack = JSON.parse(storedNBack);
-  }
-  const storedGameLog = localStorage.getItem('gameLog');
-  if (storedGameLog) {
-    gameLog = JSON.parse(storedGameLog);
-    for (let game of gameLog) {
-      if (game.date === today) {
-        gamesToday += 1;
+  try {
+    const storedNBack = localStorage.getItem('nBack');
+    if (storedNBack) {
+      nBack = JSON.parse(storedNBack);
+    }
+    const storedGameLog = localStorage.getItem('gameLog');
+    if (storedGameLog) {
+      gameLog = JSON.parse(storedGameLog);
+      for (let game of gameLog) {
+        if (game.date === today) {
+          gamesToday += 1;
+        }
       }
     }
+  } catch {
+    localStorage.removeItem('nBack');
+    localStorage.removeItem('gameLog');
   }
 
   const startGame = () => {

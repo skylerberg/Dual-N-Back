@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { tick } from 'svelte';
   import eyeSvg from './assets/img/eye.svg';
   import speakerSvg from './assets/img/speaker.svg';
   import fMp3 from './assets/audio/f.mp3';
@@ -11,6 +10,9 @@
   import tMp3 from './assets/audio/t.mp3';
   import yMp3 from './assets/audio/y.mp3';
   import type {GameResult} from './types';
+  import { loadSounds, playSound } from './audio';
+  import { buildGameSequence } from './gameSequence';
+  import { makeGameResult } from './scoring';
 
   let {nBack, finishGame, cancelGame}: {
     nBack: number,
@@ -21,83 +23,7 @@
   let gridBox1, gridBox2, gridBox3, gridBox4, gridBox5, gridBox6, gridBox7, gridBox8;
   let gridBoxes = $derived([ gridBox1, gridBox2, gridBox3, gridBox4, gridBox5, gridBox6, gridBox7, gridBox8, ]);
 
-  const audioContext = new AudioContext();
-  const soundUrls = [fMp3, jMp3, qMp3, nMp3, rMp3, sMp3, tMp3, yMp3];
-  let audioBuffers: AudioBuffer[] = [];
-
-  Promise.all(
-    soundUrls.map(url => fetch(url).then(r => r.arrayBuffer()).then(buf => audioContext.decodeAudioData(buf)))
-  ).then(buffers => { audioBuffers = buffers; });
-
-  function playSound(index: number) {
-    audioContext.resume();
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffers[index];
-    source.connect(audioContext.destination);
-    source.start(0);
-  }
-
-  type VisualPrompt = number;
-  type AuditoryPrompt = number;
-
-  const randomVisual = (): VisualPrompt => {
-    return Math.floor(Math.random() * 8);
-  }
-  const randomAudio = randomVisual;
-
-  const choose = (elements: Array<any>, count: number): Array<any> => {
-    const values = [...elements];
-    for (let i = 0; i < count; i++) {
-      const unchosenElementCount = elements.length - i;
-      const chosenIndex = Math.floor(Math.random() * unchosenElementCount);
-      const tmp = values[i];
-      values[i] = values[chosenIndex];
-      values[chosenIndex] = tmp;
-    }
-    return values.slice(0, count);
-  }
-
-  const buildGameSequence = (nBack: number): {
-    visualPrompts: Array<VisualPrompt>,
-    auditoryPrompts: Array<AuditoryPrompt>,
-    visualMatchSteps: Array<number>,
-    auditoryMatchSteps: Array<number>,
-  } => {
-    const visualMatchSteps = choose(timesteps.slice(nBack), 9);
-    const auditoryMatchSteps = choose(timesteps.slice(nBack), 9);
-
-    let visualPrompts: Array<VisualPrompt> = [];
-    let auditoryPrompts: Array<AuditoryPrompt> = [];
-
-    for (let i = 0; i < timesteps.length; i++) {
-      visualPrompts.push(randomVisual());
-      auditoryPrompts.push(randomAudio());
-    }
-
-    for (let i = 0; i < timesteps.length; i++) {
-      if (i >= nBack) {
-        if (visualMatchSteps.some((visualMatchStep) => visualMatchStep === i)) {
-          visualPrompts[i] = visualPrompts[i - nBack];
-        }
-        else {
-          while (visualPrompts[i] === visualPrompts[i - nBack]) {
-            visualPrompts[i] = randomVisual();
-          }
-        }
-
-        if (auditoryMatchSteps.some((auditoryMatchStep) => auditoryMatchStep === i)) {
-          auditoryPrompts[i] = auditoryPrompts[i - nBack];
-        }
-        else {
-          while (auditoryPrompts[i] === auditoryPrompts[i - nBack]) {
-            auditoryPrompts[i] = randomAudio();
-          }
-        }
-      }
-    }
-
-    return {visualPrompts, auditoryPrompts, visualMatchSteps, auditoryMatchSteps};
-  }
+  loadSounds([fMp3, jMp3, qMp3, nMp3, rMp3, sMp3, tMp3, yMp3]);
 
   const timesteps: Array<number> = [...Array(30 + nBack).keys()];
   const {
@@ -105,7 +31,7 @@
     auditoryPrompts,
     visualMatchSteps,
     auditoryMatchSteps,
-  } = buildGameSequence(nBack);
+  } = buildGameSequence(nBack, timesteps);
 
   const clickedVisual = $state(Array(timesteps.length).fill(false));
   const clickedAuditory = $state(Array(timesteps.length).fill(false));
@@ -127,14 +53,14 @@
         gridBoxes[activeBox].classList.remove('grid-box-active');
       }
       activeBox = visualPrompt;
-      
+
       // Force a DOM reflow before adding the class again
       void gridBoxes[activeBox].offsetWidth;
-      
+
       gridBoxes[activeBox].classList.add('grid-box-active');
     } else {
       clearInterval(gameInterval);
-      const result = makeGameResult();
+      const result = makeGameResult(visualMatchSteps, auditoryMatchSteps, clickedVisual, clickedAuditory);
       finishGame(result);
     }
   }
@@ -157,23 +83,6 @@
     else {
       clickedAuditory[currentStep] = true;
     }
-  }
-
-  const makeGameResult = (): GameResult => {
-    const visualTruePositives = visualMatchSteps.filter((step) => clickedVisual[step]).length;
-    const auditoryTruePositives = auditoryMatchSteps.filter((step) => clickedAuditory[step]).length;
-    return {
-      visual: {
-        truePositives: visualTruePositives,
-        falseNegatives: visualMatchSteps.filter((step) => !clickedVisual[step]).length,
-        falsePositives: clickedVisual.filter((step) => step).length - visualTruePositives,
-      },
-      auditory: {
-        truePositives: auditoryTruePositives,
-        falseNegatives: auditoryMatchSteps.filter((step) => !clickedAuditory[step]).length,
-        falsePositives: clickedAuditory.filter((step) => step).length - auditoryTruePositives,
-      }
-    };
   }
 
   const back = () => {
@@ -270,7 +179,6 @@
 }
 
 #game-buttons {
-  width: 100%;
   display: flex;
   margin: auto;
   justify-content: space-around;
@@ -279,7 +187,6 @@
 
 .game-button {
   margin: 10px;
-  background-color: #d9d9d9;
   border-radius: 10px;
   max-height: 300px;
   width: min(100%, 500px);

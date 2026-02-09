@@ -3,6 +3,7 @@
   import speakerSvg from './assets/img/speaker.svg';
   import PlayButton from './PlayButton.svelte';
   import type {GameResult} from './types';
+  import { calculateScore, SCORE_THRESHOLD_UP, SCORE_THRESHOLD_DOWN } from './scoring';
 
   let {nBack, setNBack, startGame, gameResult, gamesToday}: {
     nBack: number,
@@ -12,24 +13,14 @@
     gamesToday: number,
   } = $props();
 
-  const totalCorrect = gameResult.visual.truePositives + gameResult.auditory.truePositives;
-  const totalOpportunities = (
-    gameResult.visual.truePositives +
-      gameResult.visual.falseNegatives +
-      gameResult.visual.falsePositives +
-      gameResult.auditory.truePositives +
-      gameResult.auditory.falseNegatives +
-      gameResult.auditory.falsePositives
-  );
-  const dPrime = totalCorrect / totalOpportunities
-  const score = Math.round(dPrime * 100)
+  const score = calculateScore(gameResult);
 
   let nColor: undefined | 'green' | 'red' = $state(undefined);
 
-  if (score >= 85) {
+  if (score >= SCORE_THRESHOLD_UP) {
     nColor = 'green';
     setNBack(nBack + 1);
-  } else if (score < 60 && nBack > 1) {
+  } else if (score < SCORE_THRESHOLD_DOWN && nBack > 1) {
     nColor = 'red';
     setNBack(nBack - 1);
   }
@@ -69,7 +60,7 @@
   </table>
 
   <div id="outcome">
-    <div>d' = {Math.round(dPrime * 100)}%</div>
+    <div>d' = {score}%</div>
   </div>
 
   <PlayButton nColor={nColor} nBack={nBack} startGame={startGame} gamesToday={gamesToday} />
