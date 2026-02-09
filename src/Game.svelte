@@ -118,6 +118,7 @@
     if (currentStep < timesteps.length) {
       const audioPrompt = auditoryPrompts[currentStep];
       const visualPrompt = visualPrompts[currentStep];
+      sounds[audioPrompt].currentTime = 0;
       sounds[audioPrompt].play();
 
       if (activeBox !== null) {
