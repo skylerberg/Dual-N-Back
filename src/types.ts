@@ -24,6 +24,6 @@ export type Settings = {
 
 export const DEFAULT_SETTINGS: Settings = {
   volume: 0.8,
-  trialDurationMs: 3000,
+  trialDurationMs: 2000,
 };
 
