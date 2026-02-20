@@ -71,7 +71,7 @@
     }
   }
 
-  const gameInterval = setInterval(gameTick, 2000);
+  const gameInterval = setInterval(gameTick, settings.trialDurationMs);
 
   const visualClick = () => {
     if (gracePeriod && currentStep > 0) {

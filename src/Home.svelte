@@ -37,7 +37,7 @@
     }
     const storedSettings = localStorage.getItem('settings');
     if (storedSettings) {
-      settings = JSON.parse(storedSettings);
+      settings = { ...DEFAULT_SETTINGS, ...JSON.parse(storedSettings) };
     }
   } catch {
     localStorage.removeItem('nBack');

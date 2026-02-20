@@ -11,6 +11,7 @@
   } = $props();
 
   let volumePercent = $state(Math.round(settings.volume * 100));
+  let speedSeconds = $state(settings.trialDurationMs / 1000);
 
   const onVolumeChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
@@ -18,6 +19,12 @@
     const volume = volumePercent / 100;
     setVolume(volume);
     updateSettings({ ...settings, volume });
+  }
+
+  const onSpeedChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    speedSeconds = Number(target.value);
+    updateSettings({ ...settings, trialDurationMs: speedSeconds * 1000 });
   }
 
   const decreaseN = () => {
@@ -47,6 +54,19 @@
       max="100"
       value={volumePercent}
       oninput={onVolumeChange}
+    />
+  </div>
+
+  <div class="setting">
+    <label for="speed-slider">Game Speed: {speedSeconds.toFixed(1)}s</label>
+    <input
+      id="speed-slider"
+      type="range"
+      min="1"
+      max="5"
+      step="0.5"
+      value={speedSeconds}
+      oninput={onSpeedChange}
     />
   </div>
 
@@ -93,7 +113,7 @@
     font-size: 14pt;
   }
 
-  #volume-slider {
+  #volume-slider, #speed-slider {
     width: min(80vw, 300px);
     accent-color: #fc9;
   }
