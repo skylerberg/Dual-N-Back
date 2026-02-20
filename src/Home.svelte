@@ -15,7 +15,8 @@
   let settings: SettingsType = $state({ ...DEFAULT_SETTINGS });
 
   const getDateString = (date: Date): string => {
-    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+    const adjusted = new Date(date.getTime() - 4 * 60 * 60 * 1000);
+    return `${adjusted.getFullYear()}/${adjusted.getMonth() + 1}/${adjusted.getDate()}`;
   }
 
   let today = getDateString(new Date());
