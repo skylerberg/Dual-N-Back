@@ -9,5 +9,8 @@ export default defineConfig({
   })],
   build: {
     minify: 'terser',
-  }
+  },
+  test: {
+    include: ['src/**/*.test.ts'],
+  },
 })
