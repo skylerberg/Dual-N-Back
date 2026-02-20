@@ -14,14 +14,17 @@
   let canvasEl: HTMLCanvasElement | undefined = $state(undefined);
 
   const scores = gameLog.map(entry => calculateScore(entry.result));
+  const nLevels = gameLog.map(entry => entry.nBack);
   const totalGames = gameLog.length;
-  const averageScore = totalGames > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / totalGames) : 0;
+  const averageNLevel = totalGames > 0
+    ? (nLevels.reduce((a, b) => a + b, 0) / totalGames).toFixed(1)
+    : 0;
 
   // Group games by date (most recent first)
   type DayGroup = {
     date: string;
     entries: Array<{ nBack: number; score: number }>;
-    avgScore: number;
+    avgNLevel: string;
   };
 
   const dayGroups: DayGroup[] = (() => {
@@ -36,8 +39,9 @@
     }
     const groups: DayGroup[] = [];
     for (const [date, entries] of map) {
-      const avg = Math.round(entries.reduce((a, b) => a + b.score, 0) / entries.length);
-      groups.push({ date, entries, avgScore: avg });
+      const avgN = (entries.reduce((a, b) => a + b.nBack, 0) / entries.length).toFixed(1);
+      entries.reverse();
+      groups.push({ date, entries, avgNLevel: avgN });
     }
     groups.reverse();
     return groups;
@@ -48,9 +52,9 @@
     new Chart(canvasEl, {
       type: 'line',
       data: {
-        labels: scores.map((_, i) => String(i + 1)),
+        labels: nLevels.map((_, i) => String(i + 1)),
         datasets: [{
-          data: scores,
+          data: nLevels,
           borderColor: '#fc9',
           backgroundColor: '#c63',
           pointRadius: totalGames > 50 ? 0 : 3,
@@ -64,15 +68,15 @@
           tooltip: {
             callbacks: {
               title: (items) => `Game ${items[0].label}`,
-              label: (item) => `${item.raw}%`,
+              label: (item) => `N = ${item.raw}`,
             },
           },
         },
         scales: {
           y: {
-            min: 0,
-            max: 100,
-            ticks: { color: '#eee' },
+            min: 1,
+            suggestedMax: Math.max(...nLevels) + 1,
+            ticks: { color: '#eee', stepSize: 1 },
             grid: { color: '#333' },
           },
           x: {
@@ -103,7 +107,7 @@
 
     <div class="summary">
       <span>Games: {totalGames}</span>
-      <span>Avg: {averageScore}%</span>
+      <span>Avg N: {averageNLevel}</span>
     </div>
 
     <div class="day-list">
@@ -111,7 +115,7 @@
         <div class="day-group">
           <div class="day-header">
             <span class="day-date">{group.date}</span>
-            <span class="day-stats">{group.entries.length} games &middot; avg {group.avgScore}%</span>
+            <span class="day-stats">{group.entries.length} games &middot; avg N={group.avgNLevel}</span>
           </div>
           {#each group.entries as game}
             <div class="game-entry">
