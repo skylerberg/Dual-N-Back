@@ -9,7 +9,7 @@
   } = $props();
 </script>
 
-<button id="play" onclick={startGame}>
+<button id="play" onclick={startGame} aria-label="Start game">
   <div class="n-equals {nColor}">N = {nBack}</div>
   <img id="play-svg" src={playSvg} alt="play"/>
   <div class="daily-progress">{gamesToday} / 20</div>

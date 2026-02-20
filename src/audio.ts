@@ -1,5 +1,12 @@
 const audioContext = new AudioContext();
+const gainNode = audioContext.createGain();
+gainNode.connect(audioContext.destination);
+
 let audioBuffers: AudioBuffer[] = [];
+
+export function setVolume(volume: number): void {
+  gainNode.gain.value = volume;
+}
 
 export function loadSounds(urls: string[]): void {
   Promise.all(
@@ -23,6 +30,6 @@ export function playSound(index: number): void {
   if (!buffer) return;
   const source = audioContext.createBufferSource();
   source.buffer = buffer;
-  source.connect(audioContext.destination);
+  source.connect(gainNode);
   source.start(0);
 }

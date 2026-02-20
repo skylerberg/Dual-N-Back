@@ -10,19 +10,22 @@
   import tMp3 from './assets/audio/t.mp3';
   import yMp3 from './assets/audio/y.mp3';
   import type {GameResult} from './types';
-  import { loadSounds, playSound } from './audio';
+  import type {Settings} from './types';
+  import { loadSounds, playSound, setVolume } from './audio';
   import { buildGameSequence } from './gameSequence';
   import { makeGameResult } from './scoring';
 
-  let {nBack, finishGame, cancelGame}: {
+  let {nBack, finishGame, cancelGame, settings}: {
     nBack: number,
     finishGame: (result: GameResult) => void,
     cancelGame: () => void,
+    settings: Settings,
   } = $props();
 
-  let gridBox1, gridBox2, gridBox3, gridBox4, gridBox5, gridBox6, gridBox7, gridBox8;
+  let gridBox1: HTMLDivElement | undefined, gridBox2: HTMLDivElement | undefined, gridBox3: HTMLDivElement | undefined, gridBox4: HTMLDivElement | undefined, gridBox5: HTMLDivElement | undefined, gridBox6: HTMLDivElement | undefined, gridBox7: HTMLDivElement | undefined, gridBox8: HTMLDivElement | undefined;
   let gridBoxes = $derived([ gridBox1, gridBox2, gridBox3, gridBox4, gridBox5, gridBox6, gridBox7, gridBox8, ]);
 
+  setVolume(settings.volume);
   loadSounds([fMp3, jMp3, qMp3, nMp3, rMp3, sMp3, tMp3, yMp3]);
 
   const timesteps: Array<number> = [...Array(30 + nBack).keys()];
@@ -50,14 +53,17 @@
       playSound(audioPrompt);
 
       if (activeBox !== null) {
-        gridBoxes[activeBox].classList.remove('grid-box-active');
+        const prevBox = gridBoxes[activeBox];
+        if (prevBox) prevBox.classList.remove('grid-box-active');
       }
       activeBox = visualPrompt;
 
-      // Force a DOM reflow before adding the class again
-      void gridBoxes[activeBox].offsetWidth;
-
-      gridBoxes[activeBox].classList.add('grid-box-active');
+      const curBox = gridBoxes[activeBox];
+      if (curBox) {
+        // Force a DOM reflow before adding the class again
+        void curBox.offsetWidth;
+        curBox.classList.add('grid-box-active');
+      }
     } else {
       clearInterval(gameInterval);
       const result = makeGameResult(visualMatchSteps, auditoryMatchSteps, clickedVisual, clickedAuditory);
@@ -68,7 +74,7 @@
   const gameInterval = setInterval(gameTick, 2000);
 
   const visualClick = () => {
-    if (gracePeriod) {
+    if (gracePeriod && currentStep > 0) {
       clickedVisual[currentStep - 1] = true;
     }
     else {
@@ -77,7 +83,7 @@
   }
 
   const auditoryClick = () => {
-    if (gracePeriod) {
+    if (gracePeriod && currentStep > 0) {
       clickedAuditory[currentStep - 1] = true;
     }
     else {
@@ -114,6 +120,7 @@
       class="game-button {clickedVisual[currentStep] ? 'game-button-clicked' : ''}"
       onmousedown={visualClick}
       ontouchstart={visualClick}
+      aria-label="Visual match"
     >
       <img src="{eyeSvg}" class="game-button-image" alt="eye" />
     </button>
@@ -123,16 +130,19 @@
       class="game-button {clickedAuditory[currentStep] ? 'game-button-clicked' : ''}"
       onmousedown={auditoryClick}
       ontouchstart={auditoryClick}
+      aria-label="Audio match"
     >
       <img src="{speakerSvg}" class="game-button-image" alt="speaker" />
     </button>
   </div>
 
   <!-- Back button -->
-  <svg onclick={back} id="#back" viewBox="0 0 50 50" width=50px height=50px style="position:absolute;left:0;top:0;">
-    <rect style="opacity:0.0;" width=50px height=50px x=0 y=0 />
-    <polygon points='17,25 33,35 33,15' style='fill:white;' />
-  </svg>
+  <button onclick={back} aria-label="Go back" style="position:absolute;left:0;top:0;background:none;border:none;padding:0;cursor:pointer;">
+    <svg viewBox="0 0 50 50" width=50px height=50px>
+      <rect style="opacity:0.0;" width=50px height=50px x=0 y=0 />
+      <polygon points='17,25 33,35 33,15' style='fill:white;' />
+    </svg>
+  </button>
 </div>
 
 <style>

@@ -9,7 +9,7 @@
     nBack: number,
     setNBack: (n: number) => void,
     startGame: () => void,
-    gameResult: GameResult | undefined,
+    gameResult: GameResult,
     gamesToday: number,
   } = $props();
 

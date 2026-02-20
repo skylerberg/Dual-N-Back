@@ -17,3 +17,11 @@ export type GameLogEntry = {
   date: string;
 };
 
+export type Settings = {
+  volume: number;
+};
+
+export const DEFAULT_SETTINGS: Settings = {
+  volume: 0.8,
+};
+
