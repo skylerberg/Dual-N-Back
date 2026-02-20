@@ -101,7 +101,7 @@
 {:else if page === 'Game'}
   <Game nBack={nBack} finishGame={finishGame} cancelGame={cancelGame} settings={settings} />
 {:else if page === 'Score' && gameResult}
-  <Score nBack={nBack} setNBack={setNBack} startGame={startGame} gameResult={gameResult} gamesToday={gamesToday} />
+  <Score nBack={nBack} setNBack={setNBack} startGame={startGame} gameResult={gameResult} gamesToday={gamesToday} goToHistory={() => page = 'History'} goToSettings={() => page = 'Settings'} />
 {:else if page === 'History'}
   <History gameLog={gameLog} goBack={goHome} />
 {:else if page === 'Settings'}
