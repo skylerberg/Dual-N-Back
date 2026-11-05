@@ -91,11 +91,30 @@
     }
   }
 
+  // Left-hand keys press the left (visual) button, right-hand keys the right (auditory) one.
+  const keyHandlers: Record<string, () => void> = {
+    d: visualClick,
+    f: visualClick,
+    j: auditoryClick,
+    k: auditoryClick,
+  };
+
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
+    const handler = keyHandlers[event.key.toLowerCase()];
+    if (handler) {
+      event.preventDefault();
+      handler();
+    }
+  }
+
   const back = () => {
     clearInterval(gameInterval);
     cancelGame();
   }
 </script>
+
+<svelte:window onkeydown={onKeyDown} />
 
 <div id="game-screen" >
   <div id="n-value">
