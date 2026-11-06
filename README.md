@@ -8,9 +8,9 @@ Based on the task originally proposed by [1], and adapted by [2]. Dual N-Back ha
 ## Instructions
 The goal of each level is to remember the state of the game exactly N timesteps ago.
 
-The game board is a set of eight squares. They will flash in a random order, at three seconds intervals. When you recognize that the same square flashed exactly N steps ago, you press the   button.
+The game board is a set of eight squares. They will flash in a random order, at three seconds intervals. When you recognize that the same square flashed exactly N steps ago, you press the   button (or the D or F key).
 
-Simultaneously, one letter is spoken at each time step. When you recognize that the same letter was spoken exactly N steps ago, you press the   button.
+Simultaneously, one letter is spoken at each time step. When you recognize that the same letter was spoken exactly N steps ago, you press the   button (or the J or K key).
 
 <img src='src/assets/img/example.png?raw=true' width=500px />
 **Example sequence for N=2 game.** The player must remember the state of the game board N steps ago. If you do well, N will increase on the next round. If you don't do so well, N will decrease on the next round (down to N=1). There are 30+N time steps in each round.
